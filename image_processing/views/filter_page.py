@@ -80,7 +80,13 @@ def get_filter_and_error_message(filter_type: str, post, i: int, is_batch: bool 
         return BilateralFilter(int(post.getlist("bilateral-kernel-size")[i]),
                                float(post.getlist("bilateral-sigma-color")[i]),
                                float(post.getlist("bilateral-sigma-space")[i])), ""
-
+    elif filter_type == "11":
+        error_message = AreaThresholdFilter.validation(post.getlist('area-threshold-lower')[i],
+                                                       post.getlist('area-threshold-upper')[i])
+        if error_message != "":
+            return None, error_message
+        return AreaThresholdFilter(int(post.getlist('area-threshold-lower')[i]),
+                                   int(post.getlist('area-threshold-upper')[i])), ""
     else:
         return None, ""
 
@@ -104,5 +110,7 @@ def serialized_filter_params(post):
             "bilateral_kernel_size": post.getlist('bilateral-kernel-size')[i],
             "bilateral_sigma_color": post.getlist('bilateral-sigma-color')[i],
             "bilateral_sigma_space": post.getlist('bilateral-sigma-space')[i],
+            "area_threshold_lower": post.getlist('area-threshold-lower')[i],
+            "area_threshold_upper": post.getlist('area-threshold-upper')[i],
         })
     return param_list

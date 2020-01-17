@@ -35,7 +35,7 @@ class ChainFilterView(View):
                 filter_obj, error_message = get_filter_and_error_message(filter_type, request.POST, i, is_batch=False)
                 if error_message != "":
                     error_message_list.append(error_message)
-                if not filter_list is None:
+                if not filter_obj is None:
                     filter_list.append(filter_obj)
 
         error_message_of_filter_order = get_error_message_of_filter_order(filter_list)

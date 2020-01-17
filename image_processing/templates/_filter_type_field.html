@@ -105,6 +105,20 @@
     </div>
 </div>
 
+<div class="row filter-args" id="area-threshold-field" {% if filter_param.filter_select != "11" %}style="display: none;"{% endif %}>
+    <div class="col s6 m6">
+        <label>閾値下限</label>
+        <input name="area-threshold-lower" type="number" min="{{ rule_dict.area_threshold_min }}"
+               max="{{ rule_dict.area_threshold_max }}"
+               value="{{ filter_param.area_threshold_lower }}">
+    </div>
+    <div class="col s6 m6">
+        <label>閾値上限</label>
+        <input name="area-threshold-upper" type="number" min="{{ rule_dict.area_threshold_min }}"
+               max="{{ rule_dict.area_threshold_max }}"
+                  value="{{ filter_param.area_threshold_upper }}">
+    </div>
+</div>
 
 
 
@@ -213,6 +227,21 @@
         <label>距離の標準偏差</label>
         <input  name="bilateral-sigma-space" type="number" min="{{ rule_dict.sigma_min }}" max="{{ rule_dict.sigma_max }}"
         value="{{ rule_dict.bilateral_sigma_default }}">
+    </div>
+</div>
+
+<div class="row filter-args" id="area-threshold-field" style="display: none;">
+    <div class="col s6 m6">
+        <label>閾値下限</label>
+        <input name="area-threshold-lower" type="number" min="{{ rule_dict.area_threshold_min }}"
+               max="{{ rule_dict.area_threshold_max }}"
+               value="{{ rule_dict.area_threshold_lower_default }}">
+    </div>
+    <div class="col s6 m6">
+        <label>閾値上限</label>
+        <input name="area-threshold-upper" type="number" min="{{ rule_dict.area_threshold_min }}"
+               max="{{ rule_dict.area_threshold_max }}"
+               value="{{ rule_dict.area_threshold_upper_default }}">
     </div>
 </div>
 {% endif %}

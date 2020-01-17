@@ -499,6 +499,53 @@ class BilateralFilter(BaseFilter):
         return ""
 
 
+class AreaThresholdFilter(BaseFilter):
+    def __init__(self, area_threshold_lower: int, area_threshold_upper: int):
+        self._area_threshold_lower = area_threshold_lower
+        self._area_threshold_upper = area_threshold_upper
+
+    def filter_name(self):
+        return "面積閾値によるフィルタリング"
+
+    def filtering(self, img: np.ndarray):
+        result_img = img.copy()
+        contours = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
+        for contour in contours:
+            area = cv2.contourArea(contour.astype('int32'))
+            print(area)
+            if not self._area_threshold_lower <= area <= self._area_threshold_upper:
+                x, y, width, height = cv2.boundingRect(contour)
+                result_img[y:y + height, x:x + width] = 0
+        return result_img
+
+    def args_description(self):
+        return "面積の閾値: {}〜{}".format(self._area_threshold_lower, self._area_threshold_upper)
+
+    def generate_code(self):
+        return ""
+
+    def get_arranged_filename(self, file_name_excluded_extension):
+        return file_name_excluded_extension + "_area_threshold"
+
+    @staticmethod
+    def validation(threshold_lower_s: str, threshold_upper_s: str) -> str:
+        try:
+            threshold_lower = int(threshold_lower_s)
+            if not rule_dict["area_threshold_min"] <= threshold_lower <= rule_dict["area_threshold_max"]:
+                raise RuntimeError
+
+            threshold_upper = int(threshold_upper_s)
+            if not rule_dict["area_threshold_min"] <= threshold_upper <= rule_dict["area_threshold_max"]:
+                raise RuntimeError
+        except:
+            return ("[面積閾値によるフィルタリング] 閾値は{}〜{}の整数である必要があります. ".format(rule_dict["area_threshold_min"],
+                                                                      rule_dict["area_threshold_max"]))
+        return ""
+
+    def required_gray_scale_in_advance(self):
+        return True
+
+
 def get_error_message_of_filter_order(filter_list: List[BaseFilter]) -> str:
     is_gray_scaled = False
     for filter_obj in filter_list:
@@ -523,7 +570,8 @@ filter_name_list = [
     BinaryThresholdFilter(0, 255).filter_name(),
     ClosingFilter(3).filter_name(),
     OpeningFilter(3).filter_name(),
-    BilateralFilter(3, 3.0, 3.0).filter_name()
+    BilateralFilter(3, 3.0, 3.0).filter_name(),
+    AreaThresholdFilter(3, 3).filter_name(),
 ]
 
 rule_dict = {
@@ -542,6 +590,6 @@ rule_dict = {
     "bilateral_sigma_default": 20,
     "area_threshold_min": 0,
     "area_threshold_max": 100000000000,
-    "area_threshold_min_default": 100,
-    "area_threshold_max_default": 10000,
+    "area_threshold_lower_default": 100,
+    "area_threshold_upper_default": 10000,
 }
