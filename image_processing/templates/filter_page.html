@@ -117,13 +117,11 @@
         </div>
     </div>
 
-    <div class="row center">
-        <div class="col s10 m8  offset-s1 offset-m2">
-            <button class="btn waves-effect waves-light btn-large center-align blue darken-4" style="width: 100%"
-                    type="submit">
-                <i class="material-icons">send</i>　実行
-            </button>
-        </div>
+    <div class="row center filter-submit">
+        <button class="btn waves-effect waves-light btn-large center-align blue darken-4" style="width: 100%"
+                type="submit">
+            <i class="material-icons">send</i>　実行
+        </button>
     </div>
 </form>
 <div class="collection-item row {% if is_chain %}chain-filter-form{% else %}filter-form{% endif %}" style="display: none;" id="filter-form-base">
@@ -154,10 +152,10 @@ $(document).ready(function() {
 
 function showGeneratedCode() {
     if ($('#generated-code').is(':visible')) {
-        $("#generated-code").hide("slow");
+        $("#generated-code").hide("normal");
         return;
     }
-    $("#generated-code").show("slow");
+    $("#generated-code").show("normal");
 }
 
 function addFilter() {

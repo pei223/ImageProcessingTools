@@ -38,6 +38,10 @@ class ChainFilterView(View):
                 if not filter_list is None:
                     filter_list.append(filter_obj)
 
+        error_message_of_filter_order = get_error_message_of_filter_order(filter_list)
+        if error_message_of_filter_order != "":
+            error_message_list.append(error_message_of_filter_order)
+
         serialized_form_params = serialized_filter_params(request.POST)
         if len(error_message_list) > 0:
             context = filter_page.base_context(True)

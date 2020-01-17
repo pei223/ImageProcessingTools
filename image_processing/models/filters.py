@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from typing import List
 
 import numpy as np
 import cv2
@@ -24,6 +25,9 @@ class BaseFilter(metaclass=ABCMeta):
     @abstractmethod
     def get_arranged_filename(self, file_name_excluded_extension) -> str:
         pass
+
+    def required_gray_scale_in_advance(self):
+        return False
 
 
 class NoFilter(BaseFilter):
@@ -312,6 +316,9 @@ class BinaryOtsuFilter(BaseFilter):
     def get_arranged_filename(self, file_name_excluded_extension):
         return file_name_excluded_extension + "_otsu"
 
+    def required_gray_scale_in_advance(self):
+        return True
+
 
 class BinaryThresholdFilter(BaseFilter):
     def __init__(self, threshold_lower: int, threshold_upper: int, required_gray_scale=True):
@@ -355,6 +362,9 @@ class BinaryThresholdFilter(BaseFilter):
         if len(result) != 1:
             return "".join(result)
         return ""
+
+    def required_gray_scale_in_advance(self):
+        return True
 
 
 class ClosingFilter(BaseFilter):
@@ -489,6 +499,19 @@ class BilateralFilter(BaseFilter):
         return ""
 
 
+def get_error_message_of_filter_order(filter_list: List[BaseFilter]) -> str:
+    is_gray_scaled = False
+    for filter_obj in filter_list:
+        if isinstance(filter_obj, GrayScaleFilter):
+            if is_gray_scaled:
+                return "[フィルターの並び順] グレースケールは二回できません. "
+            is_gray_scaled = True
+
+        if filter_obj.required_gray_scale_in_advance() and not is_gray_scaled:
+            return "[フィルターの並び順] {}は事前にグレースケールする必要があります. ".format(filter_obj.filter_name())
+    return ""
+
+
 filter_name_list = [
     GaussianFilter(1, 0).filter_name(),
     MedianFilter(3).filter_name(),
@@ -517,6 +540,8 @@ rule_dict = {
     "threshold_upper_default": 255,
     "bilateral_kernel_default": 15,
     "bilateral_sigma_default": 20,
+    "area_threshold_min": 0,
+    "area_threshold_max": 100000000000,
+    "area_threshold_min_default": 100,
+    "area_threshold_max_default": 10000,
 }
-
-
