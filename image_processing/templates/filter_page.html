@@ -1,0 +1,193 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/filter_page.css' %}">
+{% endblock %}
+{% load custom_tag %}
+{% block page_title %}{% if is_chain %}フィルタを重ねる{% else %}フィルタ一括適用{% endif %}{% endblock %}
+{% block page_head_title %}{% if is_chain %}フィルタを重ねる{% else %}フィルタ一括適用{% endif %}{% endblock %}
+
+
+
+{% block content %}
+<div class="row" {% if not is_showing_images %}style="display: none;" {% endif %}>
+    <div class="col s12 m12 card image-list">
+        <div class="card-content">
+            {% for filtered_image in filtered_images %}
+            <div class="col s4 m3 images-card">
+                <img src="{{ filtered_image.image_url }}" width="100%" border="0"/>
+                <div class="filter-sentence-box">
+                    <a href="{{ filtered_image.image_url }}" download><i class="material-icons right">
+                        file_download
+                    </i></a>
+                    <p class="filter-title">{{ filtered_image.filter.filter_name }}</p>
+                    <p class="filter-description">{{ filtered_image.filter.args_description }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<div class="row" {% if not is_showing_images %}style="display: none;" {% endif %}}>
+    <div class="col s12 m12 card input-field">
+        <div class="card-content">
+            <span class="card-title" style="margin-bottom: 30px;">コードの自動生成<i class="material-icons right" onclick="showGeneratedCode()">
+                reorder
+            </i></span>
+            <textarea name="code" id="generated-code" rows="{{ filter_count }}" style="height: auto; display: none;">{{ generated_code }}</textarea>
+        </div>
+    </div>
+</div>
+<form method="POST" enctype="multipart/form-data">
+    <div class="row">
+        {% csrf_token %}
+        <div class="col s8 m4">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title" style="margin-bottom: 30px;">ファイル選択</span>
+                    {{ form }}
+                </div>
+            </div>
+        </div>
+        <div class="col s12 m8">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title" style="margin-bottom: 30px;">フィルター選択
+                                        <a class="btn-floating waves-effect waves-light red right"
+                                           onclick="addFilter()" style="display: block"><i
+                                                class="material-icons"
+                                                style="vertical-align: middle;">add</i></a></span>
+
+                    {% if error_message_list %}
+                    <div style="margin-bottom: 30px;">
+                        {% for error_message in error_message_list %}
+                        <p class="error-message">{{ error_message }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div id="filter-form-list" class="filter-form-list">
+                        {% for filter_param in filter_param_list %}
+                        <div class="collection-item row {% if is_chain %}chain-filter-form{% else %}filter-form{% endif %}">
+                            <div class="col s11 m11">
+                                <label>フィルタタイプ</label>
+                                <select name="filter-select" class="filter-select"
+                                        onchange="arrangeFilterForm(this.parentNode, this.value)">
+                                    {% for filter_name in filter_name_list %}
+                                    <option value="{{ forloop.counter0 }}" {% ifequal forloop.counter0 filter_param.filter_select|to_int %}selected{% endifequal %}>{{ filter_name }}</option>
+                                    {% endfor %}
+                                </select>
+                                {% include './_filter_type_field.html' %}
+                            </div>
+                            <div class="col s1 m1">
+                                <i class="material-icons" onclick="deleteFilter(this.parentNode.parentNode)">close</i>
+                            </div>
+                            <div class="col s11 m11 center-align" {% if not is_chain %}style="display: none;" {% endif %}>
+                                <i class="material-icons down-arrow">
+                                    keyboard_arrow_down
+                                </i>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="collection-item row {% if is_chain %}chain-filter-form{% else %}filter-form{% endif %}">
+                            <div class="col s11 m11">
+                                <label>フィルタタイプ</label>
+                                <select name="filter-select" class="filter-select"
+                                        onchange="arrangeFilterForm(this.parentNode, this.value)">
+                                    {% for filter_name in filter_name_list %}
+                                    <option value="{{ forloop.counter0 }}">{{ filter_name }}</option>
+                                    {% endfor %}
+                                </select>
+                                {% include './_filter_type_field.html' %}
+                            </div>
+                            <div class="col s1 m1">
+                                <i class="material-icons" onclick="deleteFilter(this.parentNode.parentNode)">close</i>
+                            </div>
+                            <div class="col s11 m11 center-align" {% if not is_chain %}style="display: none;"{% endif %}>
+                                <i class="material-icons down-arrow">
+                                    keyboard_arrow_down
+                                </i>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row center">
+        <div class="col s10 m8  offset-s1 offset-m2">
+            <button class="btn waves-effect waves-light btn-large center-align blue darken-4" style="width: 100%"
+                    type="submit">
+                <i class="material-icons">send</i>　実行
+            </button>
+        </div>
+    </div>
+</form>
+<div class="collection-item row {% if is_chain %}chain-filter-form{% else %}filter-form{% endif %}" style="display: none;" id="filter-form-base">
+    <div class="col s11 m11">
+        <label>フィルタタイプ</label>
+        <select name="filter-select" class="filter-select"
+                onchange="arrangeFilterForm(this.parentNode, this.value)">
+            {% for filter_name in filter_name_list %}
+            <option value="{{ forloop.counter0 }}">{{ filter_name }}</option>
+            {% endfor %}
+        </select>
+        {% include './_filter_type_field.html' %}
+    </div>
+    <div class="col s1 m1">
+        <i class="material-icons" onclick="deleteFilter(this.parentNode.parentNode)">close</i>
+    </div>
+    <div class="col s11 m11 center-align" {% if not is_chain %}style="display: none;"{% endif %}>
+        <i class="material-icons down-arrow">
+            keyboard_arrow_down
+        </i>
+    </div>
+</div>
+<script>
+
+$(document).ready(function() {
+    $(".filter-form-list").sortable();
+});
+
+function showGeneratedCode() {
+    if ($('#generated-code').is(':visible')) {
+        $("#generated-code").hide("slow");
+        return;
+    }
+    $("#generated-code").show("slow");
+}
+
+function addFilter() {
+    var clonedForm  = $('#filter-form-base').clone();
+    $(clonedForm).css('display', 'block');
+    $(clonedForm).children('.filter-args').each(function() {
+        $(this).css('display', 'none');
+    })
+    clonedForm.children('.filter-args').eq(0).css('display', 'block')
+
+    $('.filter-form-list').append(clonedForm);
+    $('.filter-form-list').animate({scrollTop:10000}, "slow");
+}
+
+function deleteFilter(filterForm) {
+    if ($(".filter-form").length === 2) {
+        return;
+    }
+    $(filterForm).remove();
+}
+
+function arrangeFilterForm(filterItem, number) {
+    $(filterItem).children('.filter-args').each(function() {
+        $(this).css('display', 'none');
+    })
+
+    $(filterItem).children('.filter-args').eq(number).css('display', 'block')
+}
+
+
+</script>
+
+{% endblock %}

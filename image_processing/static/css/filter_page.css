@@ -1,0 +1,41 @@
+.filter-title {
+    font-size: 20px;
+    text-align: center;
+}
+
+.filter-description {
+    text-align: center;
+}
+
+.images-card {
+    padding-bottom: 20px !important;
+}
+
+.image-list {
+    height: 600px;
+    overflow: scroll;
+}
+
+.filter-sentence-box {
+    height: 100px;
+}
+
+
+.filter-form {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid gainsboro;
+}
+
+.chain-filter-form {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.filter-select {
+    display: block; margin-bottom: 5px
+}
+
+.down-arrow {
+    font-size: 50px;
+}

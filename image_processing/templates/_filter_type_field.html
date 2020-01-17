@@ -1,0 +1,218 @@
+{% if filter_param %}
+<div class="row filter-args" id="gaussian-field" {% if filter_param.filter_select != "0" %}style="display: none;"{% endif %}>
+    <div class="col s6 m6">
+        <label>カーネルサイズ</label>
+        <input name="gauss-kernel-size" type="number" min="{{ rule_dict.kernel_min }}" max="{{ rule_dict.kernel_max }}"
+                value="{{ filter_param.gauss_kernel_size }}">
+    </div>
+    <div class="col s6 m6">
+        <label>分散</label>
+        <input  name="gauss-sigma" type="number" min="{{ rule_dict.sigma_min }}" max="{{ rule_dict.sigma_max }}"
+        value="{{ filter_param.gauss_sigma }}">
+    </div>
+</div>
+
+<div class="row filter-args" id="median-field" {% if filter_param.filter_select != "1" %}style="display: none;"{% endif %}>
+    <div class="col s6 m6">
+        <label>カーネルサイズ</label>
+        <input name="median-kernel-size" type="number" min="{{ rule_dict.kernel_min }}" max="{{ rule_dict.kernel_max }}"
+                value="{{ filter_param.median_kernel_size }}">
+    </div>
+</div>
+
+<div class="row filter-args" id="sharp-field" {% if filter_param.filter_select != "2" %}style="display: none;"{% endif %}>
+    <div class="col s6 m6">
+        <label>鮮鋭度</label>
+        <input name="sharp-k" type="number" min="{{ rule_dict.sharp_k_min }}" max="{{ rule_dict.sharp_k_max }}"
+                value="{{ filter_param.sharp_k }}">
+    </div>
+</div>
+
+<div class="row filter-args" id="sobel-field" {% if filter_param.filter_select != "3" %}style="display: none;"{% endif %}>
+    <div class="col s6 m6">
+        <label>カーネルサイズ</label>
+        <input name="sobel-kernel-size" type="number" min="{{ rule_dict.kernel_min }}" max="{{ rule_dict.kernel_max }}"
+                value="{{ filter_param.sobel_kernel_size }}">
+    </div>
+    <div class="col s6 m6">
+        <label>種別</label>
+        <select name="sobel-kind" style="display: block;">
+            <option value="0" {% if filter_param.sobel_kind == "0" %}selected{% endif %}>縦横平均</option>
+            <option value="1" {% if filter_param.sobel_kind == "1" %}selected{% endif %}>縦</option>
+            <option value="2" {% if filter_param.sobel_kind == "2" %}selected{% endif %}>横</option>
+        </select>
+    </div>
+</div>
+
+<div class="row filter-args" id="laplacian-field" {% if filter_param.filter_select != "4" %}style="display: none;"{% endif %}>
+    <div class="col s6 m6">
+        <label>カーネルサイズ</label>
+        <input name="laplacian-kernel-size" type="number" min="{{ rule_dict.kernel_min }}" max="{{ rule_dict.kernel_max }}"
+                value="{{ filter_param.laplacian_kernel_size }}">
+    </div>
+</div>
+
+<div class="row filter-args" id="gray-field" {% if filter_param.filter_select != "5" %}style="display: none;"{% endif %}>
+</div>
+
+<div class="row filter-args" id="binary-otsu-field" {% if filter_param.filter_select != "6" %}style="display: none;"{% endif %}>
+</div>
+
+<div class="row filter-args" id="binary-threshold-field" {% if filter_param.filter_select != "7" %}style="display: none;"{% endif %}>
+    <div class="col s6 m6">
+        <label>閾値下限</label>
+        <input name="binary-threshold-lower" type="number" min="{{ rule_dict.threshold_min }}" max="{{ rule_dict.threshold_max }}"
+                value="{{ filter_param.binary_threshold_lower }}">
+    </div>
+    <div class="col s6 m6">
+        <label>閾値上限</label>
+        <input name="binary-threshold-upper" type="number" min="{{ rule_dict.threshold_min }}" max="{{ rule_dict.threshold_max }}"
+                value="{{ filter_param.binary_threshold_upper }}">
+    </div>
+</div>
+
+<div class="row filter-args" id="closing-field" {% if filter_param.filter_select != "8" %}style="display: none;"{% endif %}>
+    <div class="col s6 m6">
+        <label>カーネルサイズ</label>
+        <input name="closing-kernel-size" type="number" min="{{ rule_dict.kernel_min }}" max="{{ rule_dict.kernel_max }}"
+                value="{{ filter_param.closing_kernel_size }}">
+    </div>
+</div>
+
+<div class="row filter-args" id="opening-field" {% if filter_param.filter_select != "9" %}style="display: none;"{% endif %}>
+    <div class="col s6 m6">
+        <label>カーネルサイズ</label>
+        <input name="opening-kernel-size" type="number" min="{{ rule_dict.kernel_min }}" max="{{ rule_dict.kernel_max }}"
+                value="{{ filter_param.opening_kernel_size }}">
+    </div>
+</div>
+
+<div class="row filter-args" id="bilateral-field" {% if filter_param.filter_select != "10" %}style="display: none;"{% endif %}>
+    <div class="col s4 m4">
+        <label>カーネルサイズ</label>
+        <input name="bilateral-kernel-size" type="number" min="{{ rule_dict.kernel_min }}" max="{{ rule_dict.kernel_max }}"
+                value="{{ filter_param.bilateral_kernel_size }}">
+    </div>
+    <div class="col s4 m4">
+        <label>色の標準偏差</label>
+        <input  name="bilateral-sigma-color" type="number" min="{{ rule_dict.sigma_min }}" max="{{ rule_dict.sigma_max }}"
+        value="{{ filter_param.bilateral_sigma_color }}">
+    </div>
+        <div class="col s4 m4">
+        <label>距離の標準偏差</label>
+        <input  name="bilateral-sigma-space" type="number" min="{{ rule_dict.sigma_min }}" max="{{ rule_dict.sigma_max }}"
+        value="{{ filter_param.bilateral_sigma_space }}">
+    </div>
+</div>
+
+
+
+
+{% else %}
+<div class="row filter-args" id="gaussian-field">
+    <div class="col s6 m6">
+        <label>カーネルサイズ</label>
+        <input name="gauss-kernel-size" type="number" min="3" max="{{ rule_dict.kernel_max }}"
+                value="{{ rule_dict.kernel_min }}">
+    </div>
+    <div class="col s6 m6">
+        <label>分散</label>
+        <input  name="gauss-sigma" type="number" min="{{ rule_dict.sigma_min }}" max="{{ rule_dict.sigma_max }}"
+        value="{{ rule_dict.sigma_min }}">
+    </div>
+</div>
+
+<div class="row filter-args" id="median-field" style="display: none;">
+    <div class="col s6 m6">
+        <label>カーネルサイズ</label>
+        <input name="median-kernel-size" type="number" min="{{ rule_dict.kernel_min }}" max="{{ rule_dict.kernel_max }}"
+                value="{{ rule_dict.kernel_min }}">
+    </div>
+</div>
+
+<div class="row filter-args" id="sharp-field" style="display: none;">
+    <div class="col s6 m6">
+        <label>鮮鋭度</label>
+        <input name="sharp-k" type="number" min="{{ rule_dict.sharp_k_min }}" max="{{ rule_dict.sharp_k_max }}"
+                value="{{ rule_dict.sharp_k_min }}">
+    </div>
+</div>
+
+<div class="row filter-args" id="sobel-field" style="display: none;">
+    <div class="col s6 m6">
+        <label>カーネルサイズ</label>
+        <input name="sobel-kernel-size" type="number" min="{{ rule_dict.kernel_min }}" max="{{ rule_dict.kernel_max }}"
+                value="{{ rule_dict.kernel_min }}">
+    </div>
+    <div class="col s6 m6">
+        <label>種別</label>
+        <select name="sobel-kind" style="display: block;"
+                value="{{ rule_dict.sobel_kind_min }}">
+            <option value="0" selected>縦横平均</option>
+            <option value="1">縦</option>
+            <option value="2">横</option>
+        </select>
+    </div>
+</div>
+
+<div class="row filter-args" id="laplacian-field" style="display: none;">
+    <div class="col s6 m6">
+        <label>カーネルサイズ</label>
+        <input name="laplacian-kernel-size" type="number" min="{{ rule_dict.kernel_min }}" max="{{ rule_dict.kernel_max }}"
+                value="{{ rule_dict.kernel_min }}">
+    </div>
+</div>
+
+<div class="row filter-args" id="gray-field" style="display: none;">
+</div>
+
+<div class="row filter-args" id="binary-otsu-field" style="display: none;">
+</div>
+
+<div class="row filter-args" id="binary-threshold-field" style="display: none;">
+    <div class="col s6 m6">
+        <label>閾値下限</label>
+        <input name="binary-threshold-lower" type="number" min="{{ rule_dict.threshold_min }}" max="{{ rule_dict.threshold_max }}"
+                value="{{ rule_dict.threshold_lower_default }}">
+    </div>
+    <div class="col s6 m6">
+        <label>閾値上限</label>
+        <input name="binary-threshold-upper" type="number" min="{{ rule_dict.threshold_min }}" max="{{ rule_dict.threshold_max }}"
+                value="{{ rule_dict.threshold_upper_default }}">
+    </div>
+</div>
+
+<div class="row filter-args" id="closing-field" style="display: none;">
+    <div class="col s6 m6">
+        <label>カーネルサイズ</label>
+        <input name="closing-kernel-size" type="number" min="{{ rule_dict.kernel_min }}" max="{{ rule_dict.kernel_max }}"
+                value="{{ rule_dict.kernel_min }}">
+    </div>
+</div>
+
+<div class="row filter-args" id="opening-field" style="display: none;">
+    <div class="col s6 m6">
+        <label>カーネルサイズ</label>
+        <input name="opening-kernel-size" type="number" min="{{ rule_dict.kernel_min }}" max="{{ rule_dict.kernel_max }}"
+                value="{{ rule_dict.kernel_min }}">
+    </div>
+</div>
+
+<div class="row filter-args" id="bilateral-field" style="display: none;">
+    <div class="col s4 m4">
+        <label>カーネルサイズ</label>
+        <input name="bilateral-kernel-size" type="number" min="{{ rule_dict.kernel_min }}" max="{{ rule_dict.kernel_max }}"
+                value="{{ rule_dict.bilateral_kernel_default }}">
+    </div>
+    <div class="col s4 m4">
+        <label>色の標準偏差</label>
+        <input  name="bilateral-sigma-color" type="number" min="{{ rule_dict.sigma_min }}" max="{{ rule_dict.sigma_max }}"
+        value="{{ rule_dict.bilateral_sigma_default }}">
+    </div>
+        <div class="col s4 m4">
+        <label>距離の標準偏差</label>
+        <input  name="bilateral-sigma-space" type="number" min="{{ rule_dict.sigma_min }}" max="{{ rule_dict.sigma_max }}"
+        value="{{ rule_dict.bilateral_sigma_default }}">
+    </div>
+</div>
+{% endif %}

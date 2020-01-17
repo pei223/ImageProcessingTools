@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/materialize.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/app.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/reset.css' %}">
+    <script type="text/javascript" src="{% static 'js/materialize.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery-ui.min.js' %}"></script>
+    <title>{% block page_title %}{% endblock %}</title>
+</head>
+<body style="background-color: gainsboro;">
+<div class="navbar-fixed">
+    <nav>
+        <div class="nav-wrapper blue darken-4" style="padding-left: 20px; padding-right: 20px">
+            <a href="#" class="brand-logo">画像処理ツール</a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a href="{% url 'batch_filter' %}">フィルタ一括適用する</a></li>
+                <li><a href="{% url 'chain_filter' %}">フィルタを重ねる</a></li>
+            </ul>
+        </div>
+    </nav>
+</div>
+<h3 class="page-head-title">{% block page_head_title %}{% endblock %}</h3>
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+{% block extra_js %}{% endblock %}
+{% block extra_css %}{% endblock %}
+</body>
+</html>
