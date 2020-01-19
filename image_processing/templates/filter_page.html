@@ -53,11 +53,7 @@
         <div class="col s12 m8">
             <div class="card">
                 <div class="card-content">
-                    <span class="card-title" style="margin-bottom: 30px;">フィルター選択
-                                        <a class="btn-floating waves-effect waves-light red right"
-                                           onclick="addFilter()" style="display: block"><i
-                                                class="material-icons"
-                                                style="vertical-align: middle;">add</i></a></span>
+                    <span class="card-title" style="margin-bottom: 30px;">フィルター選択</span>
 
                     {% if error_message_list %}
                     <div style="margin-bottom: 30px;">
@@ -117,11 +113,13 @@
         </div>
     </div>
 
-    <div class="row center filter-submit">
-        <button class="btn waves-effect waves-light btn-large center-align blue darken-4" style="width: 100%"
-                type="submit">
-            <i class="material-icons">send</i>　実行
-        </button>
+    <div class="row bottom-button-area valign-wrapper" style="vertical-align: middle;">
+        <button class="btn waves-effect waves-light btn-large center-align blue darken-4 filter-submit"
+                type="submit"><span style="font-size: 20px;"><i class="material-icons">send</i>　実行</span></button>
+        <a class="btn-floating waves-effect waves-light red add-filter-button btn-large"
+           onclick="addFilter()"><i
+                class="material-icons large"
+                style="vertical-align: middle; font-size: 30px;">add</i></a>
     </div>
 </form>
 <div class="collection-item row {% if is_chain %}chain-filter-form{% else %}filter-form{% endif %}" style="display: none;" id="filter-form-base">
@@ -167,7 +165,7 @@ function addFilter() {
     clonedForm.children('.filter-args').eq(0).css('display', 'block')
 
     $('.filter-form-list').append(clonedForm);
-    $('.filter-form-list').animate({scrollTop:10000}, "slow");
+    $('html').animate({scrollTop:10000}, "slow");
 }
 
 function deleteFilter(filterForm) {

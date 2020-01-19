@@ -39,3 +39,21 @@
 .down-arrow {
     font-size: 50px;
 }
+
+.bottom-button-area {
+    position: fixed;
+    bottom: 8%;
+}
+
+.filter-submit {
+    position: fixed;
+    width: 50%;
+    right: 25%;
+}
+
+.add-filter-button {
+    position: fixed;
+    right: 10%;
+    vertical-align: middle;
+    vertical-align: middle;
+}

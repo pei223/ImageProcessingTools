@@ -21,13 +21,6 @@
   border-top: 30px solid black;
 }
 
-.filter-submit {
-    width: 60%;
-    position: fixed;
-    bottom: 5%;
-    right: 20%;
-}
-
 html {
   overflow-y: auto;
 }

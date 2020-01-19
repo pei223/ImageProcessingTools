@@ -36,7 +36,7 @@ def get_filter_and_error_message(filter_type: str, post, i: int, is_batch: bool 
                                                post.getlist("sobel-kind")[i])
         if error_message != "":
             return None, error_message
-        return SobelFilter(int(post.getlist("gauss-kernel-size")[i]), int(post.getlist("sobel-kind")[i])), ""
+        return SobelFilter(int(post.getlist("sobel-kernel-size")[i]), int(post.getlist("sobel-kind")[i])), ""
 
     elif filter_type == "4":
         error_message = LaplacianFilter.validation(post.getlist("laplacian-kernel-size")[i])
