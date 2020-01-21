@@ -86,7 +86,7 @@ def get_filter_and_error_message(filter_type: str, post, i: int, is_batch: bool 
         if error_message != "":
             return None, error_message
         return AreaThresholdFilter(int(post.getlist('area-threshold-lower')[i]),
-                                   int(post.getlist('area-threshold-upper')[i])), ""
+                                   int(post.getlist('area-threshold-upper')[i]), is_batch), ""
     else:
         return None, ""
 

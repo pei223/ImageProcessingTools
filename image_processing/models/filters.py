@@ -1,15 +1,11 @@
 from abc import ABCMeta, abstractmethod
-from typing import List
+from typing import List, Dict
 
 import numpy as np
 import cv2
 
 
 class BaseFilter(metaclass=ABCMeta):
-    @abstractmethod
-    def filter_name(self) -> str:
-        pass
-
     @abstractmethod
     def filtering(self, img: np.ndarray) -> np.ndarray:
         pass
@@ -31,7 +27,8 @@ class BaseFilter(metaclass=ABCMeta):
 
 
 class NoFilter(BaseFilter):
-    def filter_name(self):
+    @staticmethod
+    def filter_name():
         return "元の画像"
 
     def filtering(self, img: np.ndarray):
@@ -52,7 +49,8 @@ class GaussianFilter(BaseFilter):
         self._kernel_size = kernel_size
         self._sigma = sigma
 
-    def filter_name(self):
+    @staticmethod
+    def filter_name():
         return "ガウシアンフィルタ"
 
     def filtering(self, img: np.ndarray):
@@ -96,7 +94,8 @@ class MedianFilter(BaseFilter):
     def __init__(self, kernel_size: int):
         self._kernel_size = kernel_size
 
-    def filter_name(self):
+    @staticmethod
+    def filter_name():
         return "メディアンフィルタ"
 
     def filtering(self, img: np.ndarray):
@@ -128,7 +127,8 @@ class SharpFilter(BaseFilter):
     def __init__(self, k: int):
         self._k = k
 
-    def filter_name(self):
+    @staticmethod
+    def filter_name():
         return "鮮鋭化"
 
     def filtering(self, img: np.ndarray):
@@ -174,7 +174,8 @@ class SobelFilter(BaseFilter):
         self._kernel_size = kernel_size
         self._kind = kind
 
-    def filter_name(self):
+    @staticmethod
+    def filter_name():
         return "Sobelフィルタ"
 
     def filtering(self, img: np.ndarray):
@@ -237,7 +238,8 @@ class LaplacianFilter(BaseFilter):
     def __init__(self, kernel_size: int):
         self._kernel_size = kernel_size
 
-    def filter_name(self):
+    @staticmethod
+    def filter_name():
         return "ラプラシアンフィルタ"
 
     def filtering(self, img: np.ndarray):
@@ -266,7 +268,8 @@ class LaplacianFilter(BaseFilter):
 
 
 class GrayScaleFilter(BaseFilter):
-    def filter_name(self):
+    @staticmethod
+    def filter_name():
         return "グレースケール"
 
     def filtering(self, img: np.ndarray):
@@ -287,7 +290,8 @@ class BinaryOtsuFilter(BaseFilter):
         self._required_gray_scale = required_gray_scale
         self._threshold = -1
 
-    def filter_name(self):
+    @staticmethod
+    def filter_name():
         return "大津の2値化"
 
     def filtering(self, img: np.ndarray):
@@ -325,7 +329,8 @@ class BinaryThresholdFilter(BaseFilter):
         self._threshold_lower, self._threshold_upper = threshold_lower, threshold_upper
         self._required_gray_scale = required_gray_scale
 
-    def filter_name(self):
+    @staticmethod
+    def filter_name():
         return "閾値による2値化"
 
     def filtering(self, img: np.ndarray):
@@ -372,7 +377,8 @@ class ClosingFilter(BaseFilter):
         self._kernel_size = closing_kernel_size
         self._required_gray_scale = required_gray_scale
 
-    def filter_name(self) -> str:
+    @staticmethod
+    def filter_name() -> str:
         return "クロージング"
 
     def filtering(self, img: np.ndarray) -> np.ndarray:
@@ -411,7 +417,8 @@ class OpeningFilter(BaseFilter):
         self._kernel_size = kernel_size
         self._required_gray_scale = required_gray_scale
 
-    def filter_name(self) -> str:
+    @staticmethod
+    def filter_name() -> str:
         return "オープニング"
 
     def filtering(self, img: np.ndarray) -> np.ndarray:
@@ -451,7 +458,8 @@ class BilateralFilter(BaseFilter):
         self._sigma_color = sigma_color
         self._sigma_space = sigma_space
 
-    def filter_name(self):
+    @staticmethod
+    def filter_name():
         return "バイラテラルフィルタ"
 
     def filtering(self, img: np.ndarray):
@@ -500,19 +508,24 @@ class BilateralFilter(BaseFilter):
 
 
 class AreaThresholdFilter(BaseFilter):
-    def __init__(self, area_threshold_lower: int, area_threshold_upper: int):
+    def __init__(self, area_threshold_lower: int, area_threshold_upper: int, required_gray_scale=True):
         self._area_threshold_lower = area_threshold_lower
         self._area_threshold_upper = area_threshold_upper
+        self._required_gray_scale = required_gray_scale
 
-    def filter_name(self):
+    @staticmethod
+    def filter_name():
         return "面積閾値によるフィルタリング"
 
     def filtering(self, img: np.ndarray):
+        if self._required_gray_scale:
+            target_img = GrayScaleFilter().filtering(img)
+        else:
+            target_img = img
         result_img = img.copy()
-        contours = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
+        contours = cv2.findContours(target_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
         for contour in contours:
             area = cv2.contourArea(contour.astype('int32'))
-            print(area)
             if not self._area_threshold_lower <= area <= self._area_threshold_upper:
                 x, y, width, height = cv2.boundingRect(contour)
                 result_img[y:y + height, x:x + width] = 0
@@ -522,7 +535,22 @@ class AreaThresholdFilter(BaseFilter):
         return "面積の閾値: {}〜{}".format(self._area_threshold_lower, self._area_threshold_upper)
 
     def generate_code(self):
-        return ""
+        if self._required_gray_scale:
+            return """# {}\ngray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+contours = cv2.findContours(gray_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
+for contour in contours:
+    area = cv2.contourArea(contour.astype('int32'))
+    if not {} <= area <= {}:
+        x, y, width, height = cv2.boundingRect(contour)
+        gray_img[y:y + height, x:x + width] = 0""".format(self.filter_name(), self._area_threshold_lower,
+                                                          self._area_threshold_upper)
+        return """# {}\ncontours = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
+for contour in contours:
+    area = cv2.contourArea(contour.astype('int32'))
+    if not {} <= area <= {}:
+        x, y, width, height = cv2.boundingRect(contour)
+        img[y:y + height, x:x + width] = 0""".format(self.filter_name(), self._area_threshold_lower,
+                                                     self._area_threshold_upper)
 
     def get_arranged_filename(self, file_name_excluded_extension):
         return file_name_excluded_extension + "_area_threshold"
@@ -560,18 +588,18 @@ def get_error_message_of_filter_order(filter_list: List[BaseFilter]) -> str:
 
 
 filter_name_list = [
-    GaussianFilter(1, 0).filter_name(),
-    MedianFilter(3).filter_name(),
-    SharpFilter(3).filter_name(),
-    SobelFilter(3, 0).filter_name(),
-    LaplacianFilter(3).filter_name(),
-    GrayScaleFilter().filter_name(),
-    BinaryOtsuFilter().filter_name(),
-    BinaryThresholdFilter(0, 255).filter_name(),
-    ClosingFilter(3).filter_name(),
-    OpeningFilter(3).filter_name(),
-    BilateralFilter(3, 3.0, 3.0).filter_name(),
-    AreaThresholdFilter(3, 3).filter_name(),
+    GaussianFilter.filter_name(),
+    MedianFilter.filter_name(),
+    SharpFilter.filter_name(),
+    SobelFilter.filter_name(),
+    LaplacianFilter.filter_name(),
+    GrayScaleFilter.filter_name(),
+    BinaryOtsuFilter.filter_name(),
+    BinaryThresholdFilter.filter_name(),
+    ClosingFilter.filter_name(),
+    OpeningFilter.filter_name(),
+    BilateralFilter.filter_name(),
+    AreaThresholdFilter.filter_name(),
 ]
 
 rule_dict = {
@@ -593,3 +621,25 @@ rule_dict = {
     "area_threshold_lower_default": 100,
     "area_threshold_upper_default": 10000,
 }
+
+
+def default_form_value() -> Dict[str, str]:
+    return {
+        "filter_select": "0",
+        "gauss_kernel_size": rule_dict["kernel_min"],
+        "gauss_sigma": rule_dict["sigma_min"],
+        "median_kernel_size": rule_dict["kernel_min"],
+        "sharp_k": rule_dict["sharp_k_min"],
+        "sobel_kernel_size": rule_dict["kernel_min"],
+        "sobel_kind": rule_dict["sobel_kind_min"],
+        "laplacian_kernel_size": rule_dict["kernel_min"],
+        "binary_threshold_lower": rule_dict["threshold_min"],
+        "binary_threshold_upper": rule_dict["threshold_max"],
+        "closing_kernel_size": rule_dict["kernel_min"],
+        "opening_kernel_size": rule_dict["kernel_min"],
+        "bilateral_kernel_size": rule_dict["bilateral_kernel_default"],
+        "bilateral_sigma_color": rule_dict["bilateral_sigma_default"],
+        "bilateral_sigma_space": rule_dict["bilateral_sigma_default"],
+        "area_threshold_lower": rule_dict["area_threshold_lower_default"],
+        "area_threshold_upper": rule_dict["area_threshold_upper_default"],
+    }

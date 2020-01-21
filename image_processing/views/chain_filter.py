@@ -12,6 +12,12 @@ from django.conf import settings
 class ChainFilterView(View):
     def get(self, request):
         context = filter_page.base_context(True)
+        if request.GET.get("preset_filters_id"):
+            filter_list = get_preset_filters_id_or_none(request.GET["preset_filters_id"])
+            if filter_list:
+                context.update({
+                    "filter_param_list": filter_list.preset_filters()
+                })
         context.update({
             'form': UploadFileForm(),
             'is_showing_images': False,
