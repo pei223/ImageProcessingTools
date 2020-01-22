@@ -9,13 +9,12 @@
 {% block page_head_title %}{% if is_chain %}フィルタを重ねる{% else %}フィルタ一括適用{% endif %}{% endblock %}
 
 
-
 {% block content %}
 <div class="row" {% if not is_showing_images %}style="display: none;" {% endif %}>
     <div class="col s12 m12 card image-list">
         <div class="card-content">
             {% for filtered_image in filtered_images %}
-            <div class="col s4 m3 images-card">
+            <div class="col s6 m3 images-card">
                 <img src="{{ filtered_image.image_url }}" width="100%" border="0"/>
                 <div class="filter-sentence-box">
                     <a href="{{ filtered_image.image_url }}" download><i class="material-icons right">
@@ -29,10 +28,11 @@
         </div>
     </div>
 </div>
-<div class="row" {% if not is_showing_images %}style="display: none;" {% endif %}}>
+<div class="row" {% if not is_showing_images %}style="display: none;" {% endif %}>
     <div class="col s12 m12 card input-field">
         <div class="card-content">
-            <span class="card-title" style="margin-bottom: 30px;">コードの自動生成<i class="material-icons right" onclick="showGeneratedCode()">
+            <span class="card-title" style="margin-bottom: 30px;">コードの自動生成<i class="material-icons right"
+                                                                             onclick="showGeneratedCode()">
                 reorder
             </i></span>
             <textarea name="code" id="generated-code" rows="{{ filter_count }}" style="height: auto; display: none;">{{ generated_code }}</textarea>
@@ -42,13 +42,16 @@
 <form method="POST" enctype="multipart/form-data">
     <div class="row">
         {% csrf_token %}
-        <div class="col s8 m4">
+        <div class="col s12 m4">
             <div class="card">
                 <div class="card-content">
                     <span class="card-title" style="margin-bottom: 30px;">ファイル選択</span>
                     {{ form }}
                 </div>
             </div>
+            {% if is_chain %}
+            {% include './_filter_template.html' %}
+            {% endif %}
         </div>
         <div class="col s12 m8">
             <div class="card">
@@ -65,45 +68,44 @@
 
                     <div id="filter-form-list" class="filter-form-list">
                         {% for filter_param in filter_param_list %}
-                        <div class="collection-item row {% if is_chain %}chain-filter-form{% else %}filter-form{% endif %}">
-                            <div class="col s11 m11">
-                                <label>フィルタタイプ</label>
-                                <select name="filter-select" class="filter-select"
-                                        onchange="arrangeFilterForm(this.parentNode, this.value)">
-                                    {% for filter_name in filter_name_list %}
-                                    <option value="{{ forloop.counter0 }}" {% ifequal forloop.counter0 filter_param.filter_select|to_int %}selected{% endifequal %}>{{ filter_name }}</option>
-                                    {% endfor %}
-                                </select>
-                                {% include './_filter_type_field.html' %}
-                            </div>
-                            <div class="col s1 m1">
-                                <i class="material-icons" onclick="deleteFilter(this.parentNode.parentNode)">close</i>
-                            </div>
-                            <div class="col s11 m11 center-align" {% if not is_chain %}style="display: none;" {% endif %}>
-                                <i class="material-icons down-arrow">
-                                    keyboard_arrow_down
-                                </i>
+                        <div class="card filter-form">
+                            <div class="card-content" style="padding-right: 10px !important;">
+                                <div class="collection-item row">
+                                    <div class="col s11 m11">
+                                        <label>フィルタタイプ</label>
+                                        <select name="filter-select" class="filter-select"
+                                                onchange="arrangeFilterForm(this.parentNode, this.value)">
+                                            {% for filter_name in filter_name_list %}
+                                            <option value="{{ forloop.counter0 }}" {% ifequal forloop.counter0 filter_param.filter_select|to_int %}selected{% endifequal %}>{{ filter_name }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                        {% include './_filter_type_field.html' %}
+                                    </div>
+                                    <div class="col s1 m1">
+                                        <i class="material-icons" onclick="deleteFilter(this.parentNode.parentNode.parentNode.parentNode)">close</i>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         {% empty %}
-                        <div class="collection-item row {% if is_chain %}chain-filter-form{% else %}filter-form{% endif %}">
-                            <div class="col s11 m11">
-                                <label>フィルタタイプ</label>
-                                <select name="filter-select" class="filter-select"
-                                        onchange="arrangeFilterForm(this.parentNode, this.value)">
-                                    {% for filter_name in filter_name_list %}
-                                    <option value="{{ forloop.counter0 }}">{{ filter_name }}</option>
-                                    {% endfor %}
-                                </select>
-                                {% include './_filter_type_field.html' %}
-                            </div>
-                            <div class="col s1 m1">
-                                <i class="material-icons" onclick="deleteFilter(this.parentNode.parentNode)">close</i>
-                            </div>
-                            <div class="col s11 m11 center-align" {% if not is_chain %}style="display: none;"{% endif %}>
-                                <i class="material-icons down-arrow">
-                                    keyboard_arrow_down
-                                </i>
+                        <div class="card filter-form">
+                            <div class="card-content" style="padding-right: 10px !important;">
+                                <div class="collection-item row">
+                                    <div class="col s11 m11">
+                                        <label>フィルタタイプ</label>
+                                        <select name="filter-select" class="filter-select"
+                                                onchange="arrangeFilterForm(this.parentNode, this.value)">
+                                            {% for filter_name in filter_name_list %}
+                                            <option value="{{ forloop.counter0 }}">{{ filter_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        {% include './_filter_type_field.html' %}
+                                    </div>
+                                    <div class="col s1 m1">
+                                        <i class="material-icons" onclick="deleteFilter(this.parentNode.parentNode.parentNode.parentNode)">close</i>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         {% endfor %}
@@ -114,32 +116,36 @@
     </div>
 
     <div class="row bottom-button-area valign-wrapper" style="vertical-align: middle;">
-        <button class="btn waves-effect waves-light btn-large center-align blue darken-4 filter-submit"
-                type="submit"><span style="font-size: 20px;"><i class="material-icons">send</i>　実行</span></button>
-        <a class="btn-floating waves-effect waves-light red add-filter-button btn-large"
+        <button class="btn waves-effect waves-light btn-large center-align blue darken-4 filter-submit valign-wrapper"
+                type="submit"><i class="material-icons">send</i><span
+                style="font-size: 20px; vertical-align: top;">　実行</span></button>
+        <!--<a class="btn-floating waves-effect waves-light blue save-filter-button"-->
+        <!--onclick="saveFilter()" {% if not is_showing_images %}style="display: none;" {% endif %}}><i-->
+        <!--class="material-icons"-->
+        <!--style="vertical-align: middle; font-size: 25px;">save</i></a>-->
+        <a class="btn-floating waves-effect waves-light red add-filter-button"
            onclick="addFilter()"><i
-                class="material-icons large"
-                style="vertical-align: middle; font-size: 30px;">add</i></a>
+                class="material-icons"
+                style="vertical-align: middle; font-size: 25px;">add</i></a>
     </div>
 </form>
-<div class="collection-item row {% if is_chain %}chain-filter-form{% else %}filter-form{% endif %}" style="display: none;" id="filter-form-base">
-    <div class="col s11 m11">
-        <label>フィルタタイプ</label>
-        <select name="filter-select" class="filter-select"
-                onchange="arrangeFilterForm(this.parentNode, this.value)">
-            {% for filter_name in filter_name_list %}
-            <option value="{{ forloop.counter0 }}">{{ filter_name }}</option>
-            {% endfor %}
-        </select>
-        {% include './_filter_type_field.html' %}
-    </div>
-    <div class="col s1 m1">
-        <i class="material-icons" onclick="deleteFilter(this.parentNode.parentNode)">close</i>
-    </div>
-    <div class="col s11 m11 center-align" {% if not is_chain %}style="display: none;"{% endif %}>
-        <i class="material-icons down-arrow">
-            keyboard_arrow_down
-        </i>
+<div class="card filter-form" style="display: none;" id="filter-form-base">
+    <div class="card-content" style="padding-right: 10px !important;">
+        <div class="collection-item row">
+            <div class="col s11 m11">
+                <label>フィルタタイプ</label>
+                <select name="filter-select" class="filter-select"
+                        onchange="arrangeFilterForm(this.parentNode, this.value)">
+                    {% for filter_name in filter_name_list %}
+                    <option value="{{ forloop.counter0 }}">{{ filter_name }}</option>
+                    {% endfor %}
+                </select>
+                {% include './_filter_type_field.html' %}
+            </div>
+            <div class="col s1 m1">
+                <i class="material-icons" onclick="deleteFilter(this.parentNode.parentNode.parentNode.parentNode)">close</i>
+            </div>
+        </div>
     </div>
 </div>
 <script>

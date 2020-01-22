@@ -1,0 +1,13 @@
+<div class="card">
+    <div class="card-content row">
+        <span class="card-title">フィルタのテンプレート</span>
+        <p class="template-kind-title">プリセット</p>
+        {% for preset_filters in preset_filters_list %}
+        <a class="waves-effect waves-light blue darken-1 btn col m12 preset-filter-button"
+           href="{% url 'chain_filter' %}?preset_filters_id={{preset_filters.filters_id}}">
+            {{ preset_filters.filters_name }}</a>
+        {% empty %}
+        <p>プリセットのテンプレートはありません。</p>
+        {% endfor %}
+    </div>
+</div>

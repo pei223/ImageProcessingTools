@@ -1,3 +1,7 @@
+body {
+    margin-bottom: 80px;
+}
+
 .filter-title {
     font-size: 20px;
     text-align: center;
@@ -24,12 +28,6 @@
 .filter-form {
     padding-top: 5px;
     padding-bottom: 5px;
-    border-bottom: 1px solid gainsboro;
-}
-
-.chain-filter-form {
-    padding-top: 5px;
-    padding-bottom: 5px;
 }
 
 .filter-select {
@@ -53,7 +51,23 @@
 
 .add-filter-button {
     position: fixed;
-    right: 10%;
+    right: 6%;
     vertical-align: middle;
+}
+
+.save-filter-button {
+    position: fixed;
+    right: 12%;
     vertical-align: middle;
+}
+
+.template-kind-title {
+    padding-top: 20px;
+    font-size: 20px;
+    color: gray;
+}
+
+.preset-filter-button {
+    margin-top: 12px;
+    text-align: left;
 }

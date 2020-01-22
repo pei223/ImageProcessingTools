@@ -64,8 +64,47 @@ class DamageDetectPresetFilters(PresetFilters):
         return filter_list
 
 
+class EdgeDetectPresetFilters(PresetFilters):
+    def filters_name(self):
+        return "エッジ検出フィルターセット"
+
+    def filters_id(self):
+        return 2
+
+    def preset_filters(self):
+        filter_len = 4
+
+        filter_list: List[Dict] = []
+        for i in range(filter_len):
+            filter_list.append(default_form_value())
+
+        filter_value = {
+            "filter_select": str(filter_name_list.index(GrayScaleFilter.filter_name()))
+        }
+        filter_list[0].update(filter_value)
+
+        filter_value = {
+            "filter_select": str(filter_name_list.index(SharpFilter.filter_name())),
+            "sharp_k": "3",
+        }
+        filter_list[1].update(filter_value)
+
+        filter_value = {
+            "filter_select": str(filter_name_list.index(MedianFilter.filter_name())),
+        }
+        filter_list[2].update(filter_value)
+
+        filter_value = {
+            "filter_select": str(filter_name_list.index(SobelFilter.filter_name())),
+        }
+        filter_list[3].update(filter_value)
+
+        return filter_list
+
+
 preset_filters = [
     DamageDetectPresetFilters(),
+    EdgeDetectPresetFilters(),
 ]
 
 
